@@ -1,0 +1,35 @@
+##Backup_Mikrotik###
+:local ftphost "xx.xx.xx.xx"
+:local ftpuser "Username"
+:local ftppassword "Password"
+:local ftppath "/microtik/FS/FSCO/"
+:local months ("jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec");
+:local ts [/system clock get time]
+:set ts ([:pick $ts 0 2].[:pick $ts 3 5].[:pick $ts 6 8])
+:local ds [/system clock get date]
+:local month [ :pick $ds 0 3 ];
+:local mm ([ :find $months $month -1 ] + 1);
+:if ($mm < 10) do={ :set mm ("0" . $mm); }
+:set ds ([:pick $ds 7 11] . $mm . [:pick $ds 4 6])
+:local fname1 ("/Backup-".[/system identity get name]."-".$ds."-".$ts.".backup")
+:local fname2 ("/Backup-".[/system identity get name]."-".$ds."-".$ts.".rsc")
+/system backup save name=$fname1
+:log info message="System backup OK !!! (1/2).";
+/export compact file=$fname2
+:log info message="Config export OK !!! (2/2)."
+:log info message="Uploading system backup OK !!! (1/2)."
+/tool fetch address="$ftphost" src-path=$fname1 user="$ftpuser" mode=ftp password="$ftppassword" dst-path="$ftppath/$fname1" upload=yes
+:log info message="Uploading config export in FILE_SERVER OK !!! (2/2)."
+/tool fetch address="$ftphost" src-path=$fname2 user="$ftpuser" mode=ftp password="$ftppassword" dst-path="$ftppath/$fname2" upload=yes
+:delay 30s
+#remove backup with MTK 
+:foreach i in=[/file find] do={ :if ([:typeof [:find [/file get $i name] "Backup-"]]!="nil") do={/file remove $i}; }
+:log info message="Configuration backup finished & remove with Mikrotik.";
+#send_mail#
+:local smtpserv [:resolve "mail.admin.com"];
+:local email "noreply@admin.com";
+:local pass iUVHhShrvp6Des;
+/tool e-mail send server=$smtpserv port=25 user=$email password=$pass start-tls=yes to="report.all@admin.com"  from=$email subject="Mikrotik Backup config -=MKT=-" body="Uploading backup config export in FILE_SERVER OK !!! 
+File uploading:$fname1 
+File uploading:$fname2 "
+:log info message="send_mail OK !!!"
