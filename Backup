@@ -28,7 +28,7 @@
 #send_mail#
 :local smtpserv [:resolve "mail.admin.com"];
 :local email "noreply@admin.com";
-:local pass iUVHhShrvp6Des;
+:local pass password;
 /tool e-mail send server=$smtpserv port=25 user=$email password=$pass start-tls=yes to="report.all@admin.com"  from=$email subject="Mikrotik Backup config -=MKT=-" body="Uploading backup config export in FILE_SERVER OK !!! 
 File uploading:$fname1 
 File uploading:$fname2 "
