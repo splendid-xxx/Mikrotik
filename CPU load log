@@ -1,0 +1,3 @@
+:global cpu1 [/system resource get cpu-load];
+
+if (($cpu1) >= 90) do={:log warning "CPU load = $cpu1 %"} else={}
