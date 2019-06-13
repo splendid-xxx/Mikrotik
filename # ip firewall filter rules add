@@ -1,0 +1,34 @@
+
+# ip firewall filter rules add
+
+#######################
+
+/ip firewall filter
+
+add chain=input protocol=icmp action=accept comment=”Allow Ping”
+
+add chain=forward protocol=icmp action=accept
+
+add chain=input connection-state=established action=accept comment=”Accept established connections”
+
+add chain=forward connection-state=established action=accept
+
+add chain=input connection-state=related action=accept comment=”Accept related connections”
+
+add chain=forward connection-state=related action=accept
+
+add chain=input connection-state=invalid action=drop comment=”Drop invalid connections”
+
+add chain=forward connection-state=invalid action=drop
+
+add chain=input protocol=udp action=accept comment=”Allow UDP”
+
+add chain=forward protocol=udp action=accept
+
+add chain=forward src-address=192.168.0.0/24 in-interface=ether2 action=accept comment=”Access to Internet from local network”
+
+add chain=input src-address=192.168.0.0/24 action=accept comment=”Access to Mikrotik only from our local network”
+
+add chain=input action=drop comment=”All other drop”
+
+add chain=forward action=drop

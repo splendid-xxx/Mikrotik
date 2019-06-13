@@ -1,0 +1,25 @@
+#Firewall
+add action=drop chain=input dst-port=53 in-interface=ether5-INET protocol=tcp
+add action=drop chain=input dst-port=53 in-interface=ether5-INET protocol=udp
+add action=accept chain=input port=1701,500,4500 protocol=udp
+add action=accept chain=input protocol=ipsec-esp
+add action=accept chain=input comment=ICMP protocol=icmp
+add action=accept chain=forward protocol=icmp
+add action=accept chain=input comment="Input Web and Winbox" dst-port=8008 \
+    protocol=tcp
+add action=accept chain=input dst-port=8291 protocol=tcp src-address=10.11.12.0/24
+add action=drop chain=input comment="Invalid connections" connection-state=\
+    invalid
+add action=drop chain=forward connection-state=invalid
+add action=accept chain=input comment="Established connections" \
+    connection-state=established
+add action=accept chain=input comment="Related connections" connection-state=\
+    related
+add action=accept chain=forward comment="Established connections" \
+    connection-state=established
+add action=accept chain=forward comment="Related connections" connection-state=\
+    related
+add action=drop chain=input
+/ip firewall nat
+add action=masquerade chain=srcnat comment="-=NAT=-" out-interface=ether5-INET \
+    src-address=10.11.12.0/24

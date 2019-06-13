@@ -1,0 +1,10 @@
+:local SitesList {"www.lostfilm.tv";"eevblog.com";"hashcat.net";"nnm-club.me";"lurkmore.to";"rutracker.org"}
+
+:foreach addr in $SitesList do={
+:local Blackip {:put ([:resolve $addr] )} 
+
+:foreach i in=[/ip firewall address-list find ] do={
+:if ( [/ip firewall address-list get $i address ] = $Blackip ) do={/ip firewall address-list remove $i}
+}
+/ip firewall address-list add address=$Blackip list=Traffic_to_Milan comment=$addr
+}
