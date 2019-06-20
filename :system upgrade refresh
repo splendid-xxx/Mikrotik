@@ -1,0 +1,4 @@
+#Скрипт обновления RouterOS
+/system upgrade refresh
+:delay 5
+/system upgrade download-all reboot-after-download=yes
