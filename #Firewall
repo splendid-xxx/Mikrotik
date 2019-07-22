@@ -7,7 +7,7 @@ add action=accept chain=input comment=ICMP protocol=icmp
 add action=accept chain=forward protocol=icmp
 add action=accept chain=input comment="Input Web and Winbox" dst-port=8008 \
     protocol=tcp
-add action=accept chain=input dst-port=8291 protocol=tcp src-address=10.11.12.0/24
+add action=accept chain=input dst-port=8291 protocol=tcp src-address=x.x.x.x/24
 add action=drop chain=input comment="Invalid connections" connection-state=\
     invalid
 add action=drop chain=forward connection-state=invalid
@@ -22,4 +22,4 @@ add action=accept chain=forward comment="Related connections" connection-state=\
 add action=drop chain=input
 /ip firewall nat
 add action=masquerade chain=srcnat comment="-=NAT=-" out-interface=ether5-INET \
-    src-address=10.11.12.0/24
+    src-address=x.x.x.x/24
